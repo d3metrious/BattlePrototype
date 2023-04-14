@@ -29,7 +29,7 @@ public class GridCell : MonoBehaviour
     {
         SetMaterialHover(false);    
     }
-    void SetMaterialHover(bool isHover)
+    public void SetMaterialHover(bool isHover)
     {
         CellMaterial.SetInt("_Hover", isHover ? 1 : 0);
     }

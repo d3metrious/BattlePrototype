@@ -99,7 +99,8 @@ public class GameGrid : MonoBehaviour
         UpdateInteractState(InteractState.RemoveUnit);
     }
     public void CellClicked(GridCell cell)
-    {  
+    {
+        UnHighlightAllCells();
         switch (CurrentInteractState) {
             case InteractState.AddUnit:
                 cell.NewTroop(CurrentTroopType);
@@ -126,7 +127,28 @@ public class GameGrid : MonoBehaviour
         }
 
     }
-    void HighlightCellsInRange() { }
+    void HighlightCellsInRange() {
+        if (!CurrentTroopType) return;
+
+        int range = CurrentTroopType.Range;
+        for (int i = -range; i < range+1; i++)
+        {
+            for (int j = -range; j < range+1; j++)
+            {
+                Vector2Int highlightedCellKey = new(selectedCell.CellKey.x + i, selectedCell.CellKey.y + j);
+                var foundCell = GridMap.TryGetValue(highlightedCellKey, out GridCell cell);
+                if (foundCell)
+                    cell.SetMaterialHover(true);
+            }
+        }
+    }
+    void UnHighlightAllCells()
+    {
+        foreach (var item in GridMap.Values)
+        {
+            item.SetMaterialHover(false);
+        }
+    }
     bool IsValidTarget(Vector2Int newTarget) 
     {
         if (newTarget == selectedCell.CellKey) return false;
