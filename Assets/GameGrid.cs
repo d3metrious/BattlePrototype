@@ -19,15 +19,14 @@ public class GameGrid : MonoBehaviour
     public enum InteractState { Default, AddUnit, SelectedUnit, RemoveUnit, MoveUnit}
     public InteractState CurrentInteractState = InteractState.Default;
     public Troop CurrentTroopType;
-    public GridCell selectedCell;
+    public GridCell SelectedCell;
+    public GridCell CurrentCell;
 
     UnityEvent NewGameState = new UnityEvent();
+    UnityEvent MouseClick = new UnityEvent();
 
-    public void AddNewGameStateListener(UnityAction call )
-    {
-        NewGameState.AddListener( call );
-
-    }
+    public void AddNewGameStateListener(UnityAction call) { NewGameState.AddListener(call); }
+    public void AddNewClickListener(UnityAction call) { MouseClick.AddListener(call); }
 
     // Start is called before the first frame update
     void Awake()
@@ -109,6 +108,10 @@ public class GameGrid : MonoBehaviour
     public void CellClicked(GridCell cell)
     {
         UnHighlightAllCells();
+
+        CurrentCell = cell; 
+        MouseClick.Invoke();
+
         switch (CurrentInteractState) {
             case InteractState.AddUnit:
                 cell.NewTroop(CurrentTroopType);
@@ -116,6 +119,7 @@ public class GameGrid : MonoBehaviour
                 UpdateInteractState(InteractState.Default);
                 CurrentTroopType = null;
                 break;
+
             case InteractState.MoveUnit:
                 MoveUnit(cell);
                 break;
@@ -124,18 +128,22 @@ public class GameGrid : MonoBehaviour
                 cell.NewTroop(null);
                 //Add troop back to inventory
                 break;
+
             case InteractState.Default:
                 UpdateInteractState(InteractState.SelectedUnit);
                 CurrentTroopType = cell.OccupiedTroop;
-                selectedCell = cell;
+                SelectedCell = cell;
                 HighlightCellsInRange();
                 break;
+
             case InteractState.SelectedUnit:
                 HandleTargetSelect(cell);
                 UpdateInteractState(InteractState.Default);
 
                 break;
         }
+
+
 
     }
     void HighlightCellsInRange() {
@@ -146,7 +154,7 @@ public class GameGrid : MonoBehaviour
         {
             for (int j = -range; j < range+1; j++)
             {
-                Vector2Int highlightedCellKey = new(selectedCell.CellKey.x + i, selectedCell.CellKey.y + j);
+                Vector2Int highlightedCellKey = new(SelectedCell.CellKey.x + i, SelectedCell.CellKey.y + j);
                 var foundCell = GridMap.TryGetValue(highlightedCellKey, out GridCell cell);
                 if (foundCell)
                     cell.HighlightCellRange(true);
@@ -162,30 +170,30 @@ public class GameGrid : MonoBehaviour
     }
     bool IsValidTarget(Vector2Int newTarget) 
     {
-        if (newTarget == selectedCell.CellKey) return false;
-        return ((newTarget-selectedCell.CellKey).magnitude)<=CurrentTroopType.Range; 
+        if (newTarget == SelectedCell.CellKey) return false;
+        return ((newTarget-SelectedCell.CellKey).magnitude)<=CurrentTroopType.Range; 
     }
     void HandleTargetSelect(GridCell cell)
     {
         if (!CurrentTroopType) return;
         if (IsValidTarget(cell.CellKey))
         {
-            selectedCell.TargetCell = cell.CellKey;
+            SelectedCell.TargetCell = cell.CellKey;
         }
     }
 
     void MoveUnit(GridCell Cell)
     {
-        if (selectedCell && selectedCell!=Cell)
+        if (SelectedCell && SelectedCell!=Cell)
         {
-            Cell.NewTroop(selectedCell.OccupiedTroop);
-            selectedCell.NewTroop(null);
-            selectedCell = null;
+            Cell.NewTroop(SelectedCell.OccupiedTroop);
+            SelectedCell.NewTroop(null);
+            SelectedCell = null;
         }
         else
         {
             if (Cell.OccupiedTroop != null)
-                selectedCell = Cell;
+                SelectedCell = Cell;
         }
     }
     public void BattleTick()
