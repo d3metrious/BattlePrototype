@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TroopType5
   m_EditorClassIdentifier: 
   TroopName: Warrior
-  Sprite: {fileID: 21300000, guid: af7b90c8893905049b6ce94eeea2ce7e, type: 3}
+  Sprite: {fileID: 21300000, guid: 82cf2521098b02149be4acf5d0368bc3, type: 3}
   Health: 300
   Damage: 1
   Range: 2

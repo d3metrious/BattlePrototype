@@ -16,7 +16,7 @@ public class GameGrid : MonoBehaviour
 
     public Dictionary<Vector2Int, GridCell> GridMap = new Dictionary<Vector2Int, GridCell>();
 
-    public enum InteractState { Default, AddUnit, SelectedUnit, RemoveUnit}
+    public enum InteractState { Default, AddUnit, SelectedUnit, RemoveUnit, MoveUnit}
     public InteractState CurrentInteractState = InteractState.Default;
     public Troop CurrentTroopType;
     public GridCell selectedCell;
@@ -98,6 +98,14 @@ public class GameGrid : MonoBehaviour
         CurrentTroopType = null;
         UpdateInteractState(InteractState.RemoveUnit);
     }
+    public void MarkAsMoving()
+    {
+        UpdateInteractState(InteractState.MoveUnit);
+    }
+    public void MarkAsSelecting()
+    {
+        UpdateInteractState(InteractState.Default);
+    }
     public void CellClicked(GridCell cell)
     {
         UnHighlightAllCells();
@@ -107,6 +115,9 @@ public class GameGrid : MonoBehaviour
                 // Reduce troop inventory amount
                 UpdateInteractState(InteractState.Default);
                 CurrentTroopType = null;
+                break;
+            case InteractState.MoveUnit:
+                MoveUnit(cell);
                 break;
                 
             case InteractState.RemoveUnit:
@@ -163,6 +174,20 @@ public class GameGrid : MonoBehaviour
         }
     }
 
+    void MoveUnit(GridCell Cell)
+    {
+        if (selectedCell && selectedCell!=Cell)
+        {
+            Cell.NewTroop(selectedCell.OccupiedTroop);
+            selectedCell.NewTroop(null);
+            selectedCell = null;
+        }
+        else
+        {
+            if (Cell.OccupiedTroop != null)
+                selectedCell = Cell;
+        }
+    }
     public void BattleTick()
     {
         
