@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GridCell : MonoBehaviour
 {
+    [SerializeField] TextMeshProUGUI HealthText;
     public GameObject TroopObj;
     public Vector2Int CellKey { get; set; }
     public Troop OccupiedTroop;
@@ -52,11 +54,14 @@ public class GridCell : MonoBehaviour
             var instance = ScriptableObject.Instantiate(troop);
             OccupiedTroop = instance;
             TroopObj.GetComponent<SpriteRenderer>().sprite = troop.Sprite;
+            HealthText.text = OccupiedTroop.Health.ToString();
+
         }
         else
         {
             OccupiedTroop = null;
             TroopObj.GetComponent<SpriteRenderer>().sprite=null;
+            HealthText.text = "";
         }
     }
 
@@ -79,6 +84,7 @@ public class GridCell : MonoBehaviour
     public void EndBattle()
     {
         if (!OccupiedTroop) return;
+        HealthText.text = OccupiedTroop.Health.ToString();
         Debug.Log(OccupiedTroop.TroopName + OccupiedTroop.Health);
         if (OccupiedTroop.Health <= 0) {
             Debug.Log(OccupiedTroop.TroopName + " has perished at " + CellKey);
