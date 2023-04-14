@@ -7,12 +7,20 @@ using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+[System.Serializable]
+public class CellData
+{
+    [SerializeField] public Vector2Int Location;
+    [SerializeField] public Troop TroopType;
+}
 public class GameGrid : MonoBehaviour
 {
     public static GameGrid Instance;
-    [SerializeField] Vector2Int GridSize = new (10,10);
+    [SerializeField] Vector2Int GridSize = new(10, 10);
     [SerializeField] int CellSize = 128;
     [SerializeField] GameObject CellPrefab = null;
+    [SerializeField] CellData[] DefaultLoadout;
 
     public Dictionary<Vector2Int, GridCell> GridMap = new Dictionary<Vector2Int, GridCell>();
 
@@ -21,6 +29,9 @@ public class GameGrid : MonoBehaviour
     public Troop CurrentTroopType;
     public GridCell SelectedCell;
     public GridCell CurrentCell;
+
+   
+
 
     UnityEvent NewGameState = new UnityEvent();
     UnityEvent MouseClick = new UnityEvent();
@@ -82,6 +93,7 @@ public class GameGrid : MonoBehaviour
             }
         }
     }
+
     public void UpdateInteractState(InteractState interactState)
     {
         CurrentInteractState = interactState;
@@ -211,6 +223,19 @@ public class GameGrid : MonoBehaviour
         }
     }
 
+    public void AddDefaultLoadout()
+    {
+        foreach (var item in GridMap.Values)
+        {
+            item.NewTroop(null);
+        }
+        foreach (CellData item in DefaultLoadout)
+        {
+            GridMap.TryGetValue(new Vector2Int(item.Location.x, item.Location.y), out GridCell cell);
+            if (cell) cell.NewTroop(item.TroopType);
+        }
+        
+    }
 
     void Destroy() { if (Instance != null) Destroy(Instance); }
 
