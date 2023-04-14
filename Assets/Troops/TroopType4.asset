@@ -16,4 +16,4 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: b2aa3291933f158419818912c6bbfee2, type: 3}
   Health: 33
   Damage: 12
-  Range: 2
+  Range: 4

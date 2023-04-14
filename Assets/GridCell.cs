@@ -33,6 +33,11 @@ public class GridCell : MonoBehaviour
     {
         CellMaterial.SetInt("_Hover", isHover ? 1 : 0);
     }
+    public void HighlightCellRange(bool isHover)
+    {
+        CellMaterial.SetInt("_Range", isHover ? 1 : 0);
+    }
+
 
     public void ChangeGridMaterial()
     {

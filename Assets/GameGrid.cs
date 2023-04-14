@@ -149,7 +149,7 @@ public class GameGrid : MonoBehaviour
                 Vector2Int highlightedCellKey = new(selectedCell.CellKey.x + i, selectedCell.CellKey.y + j);
                 var foundCell = GridMap.TryGetValue(highlightedCellKey, out GridCell cell);
                 if (foundCell)
-                    cell.SetMaterialHover(true);
+                    cell.HighlightCellRange(true);
             }
         }
     }
@@ -157,7 +157,7 @@ public class GameGrid : MonoBehaviour
     {
         foreach (var item in GridMap.Values)
         {
-            item.SetMaterialHover(false);
+            item.HighlightCellRange(false);
         }
     }
     bool IsValidTarget(Vector2Int newTarget) 
