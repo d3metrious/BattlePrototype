@@ -65,13 +65,14 @@ public class GridCell : MonoBehaviour
         if (!OccupiedTroop) return;
 
         var hasTarget = GameGrid.Instance.GridMap.TryGetValue(TargetCell, out GridCell target);
-        if (hasTarget && OccupiedTroop)
+        if (hasTarget)
         {
             var targetTroop = target.OccupiedTroop;
-            if (targetTroop != null)
+            if (targetTroop)
             {
-                targetTroop.Health -= 
+                targetTroop.Health -=
                     OccupiedTroop.Damage;
+                Debug.Log(OccupiedTroop.TroopName + " attacks " + targetTroop.TroopName + " at cell " + TargetCell + ":: now has health: " + targetTroop.Health.ToString());
             }
         }
     }
@@ -79,7 +80,10 @@ public class GridCell : MonoBehaviour
     {
         if (!OccupiedTroop) return;
         Debug.Log(OccupiedTroop.TroopName + OccupiedTroop.Health);
-        if (OccupiedTroop.Health <= 0) { NewTroop(null); }
+        if (OccupiedTroop.Health <= 0) {
+            Debug.Log(OccupiedTroop.TroopName + " has perished at " + CellKey);
+            NewTroop(null); 
+        }
     }
 
     void ApplyDefaultTarget()

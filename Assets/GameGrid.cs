@@ -171,7 +171,7 @@ public class GameGrid : MonoBehaviour
     bool IsValidTarget(Vector2Int newTarget) 
     {
         if (newTarget == SelectedCell.CellKey) return false;
-        return ((newTarget-SelectedCell.CellKey).magnitude)<=CurrentTroopType.Range; 
+        return ((newTarget-SelectedCell.CellKey).magnitude)<=CurrentTroopType.Range+1; 
     }
     void HandleTargetSelect(GridCell cell)
     {
@@ -184,9 +184,11 @@ public class GameGrid : MonoBehaviour
 
     void MoveUnit(GridCell Cell)
     {
-        if (SelectedCell && SelectedCell!=Cell)
+        if(Cell == null) return;
+        if (SelectedCell && SelectedCell!=Cell && !Cell.OccupiedTroop)
         {
             Cell.NewTroop(SelectedCell.OccupiedTroop);
+            Cell.OccupiedTroop.Health = SelectedCell.OccupiedTroop.Health;
             SelectedCell.NewTroop(null);
             SelectedCell = null;
         }
